@@ -11,6 +11,7 @@ import javax.swing.SwingConstants;
 
 import Logic.Database;
 import Logic.Person;
+import Logic.Validator;
 
 import javax.swing.JTextField;
 import javax.swing.DefaultComboBoxModel;
@@ -38,14 +39,28 @@ public class UpdateVisitor{
 		JButton btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(Validator.isText(nameField.getText())==false || Validator.isNumber(passportField.getText())==false){
+					JOptionPane.showMessageDialog(frame, "You entered wrong data types, input Name and Passport again please");
+					clearFields();
+					return;
+				}
 				Database db = new Database();
-				db.updateVisitor(person.getId(), nameField.getText(), passportField.getText(), (String)comboBox.getSelectedItem() );
+				
+				//this if statement will check if the customer changed the priority combobox, if so it will erase the person from the db
+				//and add him again with new information to avoid him to remain in top of the queue based on db position.
+				
+				if(person.getPriority().equals((String)comboBox.getSelectedItem())) {
+					db.updateVisitor(person.getId(), nameField.getText(), passportField.getText(), (String)comboBox.getSelectedItem() );
+				}else {
+					db.updatePriority(person.getId(), nameField.getText(), passportField.getText(), (String)comboBox.getSelectedItem());
+				}
+				
 				JOptionPane.showMessageDialog(frame, "Visitor updated successfully");
 				mainframe.updateNumberVisitors();
 				frame.dispose();
 			}
 		});
-		btnUpdate.setBounds(138, 192, 148, 35);
+		btnUpdate.setBounds(213, 184, 148, 35);
 		frame.getContentPane().add(btnUpdate);
 		
 		comboBox = new JComboBox();
@@ -84,6 +99,20 @@ public class UpdateVisitor{
 		JLabel lblUpdateVisitor = new JLabel("Update Visitor");
 		lblUpdateVisitor.setBounds(179, 9, 108, 14);
 		frame.getContentPane().add(lblUpdateVisitor);
+		
+		JButton btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+			}
+		});
+		btnBack.setBounds(84, 186, 119, 33);
+		frame.getContentPane().add(btnBack);
+	}
+	
+	private void clearFields() {
+		nameField.setText("");
+		passportField.setText("");
 	}
 
 }

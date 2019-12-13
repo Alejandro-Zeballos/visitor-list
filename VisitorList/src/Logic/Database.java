@@ -177,6 +177,13 @@ public class Database {
 		}
 	}
 	
+	public void updatePriority(String id, String name, String passport, String priority) {
+		removeVisitor(id);
+		addVisitor(name,passport,priority);
+	}
+	
+	//this method will only work if the priority does not change.
+	
 	public void updateVisitor(String id, String name, String passport, String priority) {
 		String query = "UPDATE people SET name ='"+name+"', passport ='" + passport + "', priority ='" + priority +"' WHERE id = "+ id ;
 		try {

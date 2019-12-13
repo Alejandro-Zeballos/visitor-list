@@ -10,6 +10,7 @@ import javax.swing.SwingConstants;
 
 import Logic.DList;
 import Logic.Database;
+import Logic.Validator;
 
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
@@ -81,20 +82,39 @@ public class AddVisitor {
 		JButton btnAddVisitor = new JButton("Add Visitor");
 		btnAddVisitor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				if(Validator.isText(name.getText())==false || Validator.isText(surname.getText())==false || Validator.isNumber(passport.getText())==false){
+					JOptionPane.showMessageDialog(frame, "You entered wrong data types, input Name and Passport again please");
+					clearFields();
+					return;
+				}
 				Database db = new Database();
 				db.addVisitor(name.getText()+" "+ surname.getText(), passport.getText(), (String)priority.getSelectedItem());
 				JOptionPane.showMessageDialog(frame, "Visitor added succesfully");
 				String visitorNumber = db.getVisitorNumber(passport.getText());
 				JOptionPane.showMessageDialog(frame, "Visitor id = " + visitorNumber);
 				mainFrame.updateNumberVisitors();
+
 				frame.dispose();
 				
 			}
 			
 		});
-		btnAddVisitor.setBounds(153, 227, 89, 23);
+		btnAddVisitor.setBounds(220, 216, 89, 23);
 		frame.getContentPane().add(btnAddVisitor);
+		
+		JButton btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.dispose();
+			}
+		});
+		btnBack.setBounds(81, 216, 89, 23);
+		frame.getContentPane().add(btnBack);
 	}
-
-
+	
+	private void clearFields() {
+		name.setText("");
+		surname.setText("");
+		passport.setText("");
+	}
 }

@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import Logic.DList;
 import Logic.Person;
+import Logic.Validator;
 
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -53,6 +54,7 @@ public class MainFrame {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		//the object list will hold all the people in the queue
 		list = new DList();
 		frame = new JFrame();
 	
@@ -64,8 +66,16 @@ public class MainFrame {
 		
 		JButton btnCheckPosition = new JButton("Check Visitor Position");
 		btnCheckPosition.addActionListener(new ActionListener() {
+			
+		//check position action listener////////////////////////////////////////////////////////////
 			public void actionPerformed(ActionEvent e) {
-				String id = JOptionPane.showInputDialog(frame, "Insert the visitor's id to check position");
+				String id;
+				id = JOptionPane.showInputDialog(frame, "Insert the visitor's id to check position");
+				//validation for numeric value
+				while(Validator.isNumber(id)==false){
+					JOptionPane.showMessageDialog(frame, "Input just a valid number");
+					id = JOptionPane.showInputDialog(frame, "Insert the visitor's id to check position");
+				}
 				int position = list.checkPosition(id);
 				JOptionPane.showMessageDialog(frame, "The visitor with the id " + id + " is in the position: " + position );
 			}
@@ -75,17 +85,34 @@ public class MainFrame {
 		
 		JButton btnReduceQueue = new JButton("Reduce queue");
 		btnReduceQueue.addActionListener(new ActionListener() {
+		
+		///// reduce queue action listener////////////////////////////////////////////////////
 			public void actionPerformed(ActionEvent e) {
+				
 				int quantity = Integer.parseInt(JOptionPane.showInputDialog(frame, "How many visitor you want to remove fromm the queue?"));
-				/////input validation here//////////////
+				/////Validation for correct numeric input//////////////
+				while(Validator.isNumber(Integer.toString(quantity))==false){
+					JOptionPane.showMessageDialog(frame, "Input just a valid number");
+					 quantity = Integer.parseInt(JOptionPane.showInputDialog(frame, "How many visitor you want to remove fromm the queue?"));
+				}
+				
+				////validation for checking there is enough people in the queue for removing.
+				if(list.getSize()<quantity){
+
+					
+					JOptionPane.showMessageDialog(frame, "The queue is not that big");
+					return;
+				}
 				
 				int answer = JOptionPane.showConfirmDialog(frame, "Confirm removing " + quantity + " visitors from the queue" );
+				
 				if(answer == 0) {
 					for(int k = 0 ; k<quantity; k++) {
 						list.removeTail(list.getTail().getPerson().getId());
 					}
 					JOptionPane.showMessageDialog(frame, quantity + " visitors has been removed from queue");
 					updateNumberVisitors();
+
 				}
 		
 			}
@@ -95,6 +122,8 @@ public class MainFrame {
 		
 		JButton btnUpdate = new JButton("Update Visitor Information");
 		btnUpdate.addActionListener(new ActionListener() {
+			
+		///update action listener///////////////////////////////////////////
 			public void actionPerformed(ActionEvent e) {
 				String id = JOptionPane.showInputDialog(frame, "Insert the visitor's id to be updated");
 				new UpdateVisitor(window, list.getPerson(id));
@@ -116,15 +145,29 @@ public class MainFrame {
 		
 		JButton btnDeleteVisitor = new JButton("Delete Visitor");
 		btnDeleteVisitor.addActionListener(new ActionListener() {
+			
+		// delete action listener ///////////////////////////////////////////////////
 			public void actionPerformed(ActionEvent arg0) {
 				String id = JOptionPane.showInputDialog(frame, "What is the id number of the Visitor to remove?");
+				Person thePerson;
 				/////input validation here//////////////
-				Person thePerson = list.getPerson(id);
+				while(Validator.isNumber(id)==false){
+					JOptionPane.showMessageDialog(frame, "Input just a valid number");
+					id = JOptionPane.showInputDialog(frame, "What is the id number of the Visitor to remove?");
+				}
+				try {/////////////when the
+					thePerson = list.getPerson(id);
+				}catch(Exception e) {
+					JOptionPane.showMessageDialog(frame, "Person not found");
+					return;
+				}
+				
 				int answer = JOptionPane.showConfirmDialog(frame, "Confirm removing " + thePerson );
 				if(answer == 0) {
-					list.removeVisitor(id);
+					list.removeVisitor(id); 
 					JOptionPane.showMessageDialog(frame, "Visitor removed from queue");
 					updateNumberVisitors();
+
 				}
 		
 			}
@@ -161,12 +204,12 @@ public class MainFrame {
 		
 		lblNPeople.setFont(new Font("Rockwell Extra Bold", Font.BOLD, 36));
 		lblNPeople.setForeground(Color.BLUE);
-		lblNPeople.setBounds(283, 27, 89, 42);
+		lblNPeople.setBounds(298, 28, 27, 42);
 		frame.getContentPane().add(lblNPeople);
 		lblNPeople.setText(String.valueOf(list.getSize()));
 		
 		JLabel lblPeopleInThe = new JLabel("People in the queue:");
-		lblPeopleInThe.setBounds(176, 40, 118, 14);
+		lblPeopleInThe.setBounds(171, 51, 118, 14);
 		frame.getContentPane().add(lblPeopleInThe);
 		
 
@@ -177,6 +220,11 @@ public class MainFrame {
 		public void updateNumberVisitors() {
 			list = new DList();
 			lblNPeople.setText(String.valueOf(list.getSize()));
+			
+			//this part will print in the console the state of my linked list each time it has been modified, it helps to make
+			//sure everything goes smooth and will be easy for testing purposes.
+			System.out.println("After and update in visitor list");
+			list.iterateForward();
 		}
 
 }
