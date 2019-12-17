@@ -32,7 +32,7 @@ public class DList {
 		}
 	}
 	
-	public void lookAfter() {
+	public void lookAfter() {//method for looking after a person and then erase it from the queue.
 		
 		db.removeVisitor(head.getPerson().getId());
 		head = head.getNext();
@@ -42,13 +42,13 @@ public class DList {
 	
 	}
 	
-	public void removeVisitor(String id) {
+	public void removeVisitor(String id) { //method for removing a visitor with id parameter
 		System.out.println(id);
 		db.removeVisitor(id);
 		
 	}
 	
-	public int checkPosition(String id) {
+	public int checkPosition(String id) { //checking position of a visitor in the queue with id parameter
 		int iterations = 0;
     	Node tmp = head;
     	System.out.println("geting values if uterations inside getPerson method");
@@ -63,7 +63,7 @@ public class DList {
         }
         return 0;
 	}
-	public void removeTail(String id) {
+	public void removeTail(String id) { //remove last person in the queue
 		System.out.println(id);
 		db.removeVisitor(id);
 		tail.getPrev().setNext(null);
@@ -71,9 +71,6 @@ public class DList {
 		
 	}
 	
-	public void moveForward() {
-		
-	}
 	
 	public void addVisitor(Person person) {
 		
@@ -152,8 +149,7 @@ public class DList {
 		/////////////////////////////////////////////////////////////////////
 	}
 
-	//////////////////////////////////////////////////////////////////
-    public void iterateForward(){
+    public void iterateForward(){ //useful method for printing in the console status of the double linked list
     	System.out.println("");
         System.out.println("-------------------------------------------------------");
         System.out.println("iterating forward..");
@@ -165,7 +161,7 @@ public class DList {
     }
     //////////////////////////////////////////////////////////////////////////
     
-    public Person getPerson(String id) {
+    public Person getPerson(String id) { //this method returns a person object
     	Node tmp = head;
         while(tmp != null){
             if(tmp.getPerson().getId().equals(id)) {
